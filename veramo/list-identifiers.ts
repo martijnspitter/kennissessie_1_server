@@ -1,4 +1,4 @@
-import { agent } from './veramo/setup'
+import { agent } from './setup'
 
 async function main() {
   const identifiers = await agent.didManagerFind()
