@@ -2,32 +2,27 @@ import mongoose from 'mongoose';
 
 const Schema = mongoose.Schema;
 
-const accountSchema = new Schema(
+const accountSchema = new Schema<IAccount>(
   {
     email: {
       type: String,
       required: true
     },
-    username: {
-      type: String,
-      required: true
+    profile: {
+      type: Schema.Types.ObjectId,
     },
-    firstname: {
+    identifier: {
       type: String,
-      required: true
     },
-    lastname: {
-      type: String,
-      required: true
-    },
-    myChannels: [
-      {
-        type: Schema.Types.ObjectId,
-        ref: 'Channel'
-      },
-    ],
   },
   { timestamps: true }
 );
 
-module.exports = mongoose.model('Account', accountSchema);
+export interface IAccount {
+  id: string,
+  email: string,
+  profile: mongoose.ObjectId,
+  identifier: string
+}
+
+export const Account = mongoose.model<IAccount>('Account', accountSchema);

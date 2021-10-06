@@ -1,96 +1,84 @@
 import { gql } from 'apollo-server';
 
 export const typeDefs = gql`
-    type Account {
-    _id: ID!
+  type Account {
+    id: ID!
     email: String!
-    username: String!
-    firstname: String!
-    lastname: String!
-    myChannels: [Channel]
+    profile: Profile    
+    identifier: String
     createdAt: Int!
     updatedAt: Int!
   }
 
-  type Channel {
-    _id: ID!
-    title: String!
-    description: String
-    twilioId: String!
-    creator: Account!
-    members: [Account]
+  type Profile {
+    id: ID!
+    firstname: String!
+    lastname: String!
+    account: Account
+    certificateRecipients: [Account]
     createdAt: Int!
     updatedAt: Int!
   }
 
   input AccountInput {
-    _id: ID
     email: String!
-    username: String!
-    password: String!
+    identifier: String
+  }
+
+  input ProfileInput {
     firstname: String!
     lastname: String!
-    token: String!
-    tokenExpiration: Int!
-  }
-
-  input ChannelInput {
-    _id: ID
-    title: String!
-    description: String
-    virgilId: String!
-    creator: Account!
-    members: [Account]
+    account: ID!
+    certificateRecipients: [ID]
   }
   
-  input AddChannelMember {
-    members: Account!
+  input AddCertificateRecipient {
+    accountId: ID!
   }
 
-  input UpdateMyChannels {
-    myChannels: Channel!
+  # input of validate endpoint
+  input ValidateCertificatie {
+    certificate: String
+    publisherIdentity: String
   }
 
-  input EditChannel {
-    channelId: ID!
-    title: String!
-    description: String!
+  # input of publish certificate endpoint
+  input PublishCertificate {
+    publisherIdentity: String
+    receiverIdentity: String
   }
 
-  enum Order {
-    ASC
-    DESC
-  }
-  
-  input SortBy {
-    field: String!
-    order: Order!
+  input EditAccount {
+    accountId: ID!
+    email: String
   }
 
-  type RootQuery {
-    allAccounts(): [Account!]
+  input EditProfile {
+    profileId: ID!
+    firstname: String
+    lastname: String
+  }
+
+  type Query {
+    allAccounts: [Account!]!
     account(id: String!): Account
-    allChannels(): [Channel!]
-    channel(id: String!): Channel
-    myChannels(id: String!): [Channel!]
+    allProfiles: [Profile!]!
+    profile(id: String!): Profile
+    certificateRecipients(id: String!): [Account]!
+
+    # here is the validate endpoint with input and return: Boolean? 
+    validate(input: ValidateCertificatie): Boolean!
   }
 
-  type RootMutation {
+  type Mutation {
     createAccount(input: AccountInput): Account!
-    createChannel(input: ChannelInput): Channel!
-    editAccount(input: ): Account!
-    editChannel(input: EditChannel): Channel!
-    addChannelMember(input: AddChannelMember): Channel!
-    updateMyChannels(input: UpdateMyChannels): Account!
+    editAccount(input: EditAccount): Account!
+    createProfile(input: ProfileInput): Profile!
+    editProfile(input: EditProfile): Profile!
+    addCertificateRecipient(input: AddCertificateRecipient): Account!
+    
+    # publish certificate endpoint. Return type now string
+    publishCertificate(input: PublishCertificate): String!
   }
 
-  type RootSubstription {
-    newChannels: [Channel!]
-  }
-
-  schema {
-    query: RootQuery
-    mutation: RootMutation
-    subscription: RootSubstription
-  }
 `;
