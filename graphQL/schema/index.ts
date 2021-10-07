@@ -4,7 +4,7 @@ export const typeDefs = gql`
   type Account {
     id: ID!
     email: String!
-    profile: Profile    
+    profile: Profile!    
     identifier: String
     createdAt: Int!
     updatedAt: Int!
@@ -14,8 +14,8 @@ export const typeDefs = gql`
     id: ID!
     firstname: String!
     lastname: String!
-    account: Account
-    certificateRecipients: [Account]
+    account: Account!
+    certificateRecipients: [Account!]!
     createdAt: Int!
     updatedAt: Int!
   }
