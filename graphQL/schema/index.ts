@@ -4,7 +4,7 @@ export const typeDefs = gql`
   type Account {
     id: ID!
     email: String!
-    profile: Profile    
+    profile: String    
     identifier: String
     createdAt: Int!
     updatedAt: Int!
