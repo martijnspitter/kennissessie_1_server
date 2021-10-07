@@ -149,25 +149,28 @@ const resolvers = {
         console.log(err);
         throw err;
       }
+    },
+    publishCertificate: async (parent: any, args: any, context: any, info: any) => {
+      const { publisherIdentity, receiverIdentity, publisherAccountId, receiverAccountId } = args.input;
+      // create certificate
+
+
+      // add recipient to profile of publisher
+      const publisherAccount = await Account.findById(publisherAccountId).lean();
+      if (publisherAccount) {
+        const publisherProfile = await Profile.findById(publisherAccount.profile).lean();
+        if (publisherProfile) {
+          const recipients = [...publisherProfile.certificateRecipients];
+          recipients.push(receiverAccountId);
+          await Profile.updateOne({ id: publisherProfile.id }, { certificateRecipients: recipients })
+        }
+      }
+
+      // return certificate
+      return 'success';
     }
   },
-  publishCertificate: async (parent: any, args: any, context: any, info: any) => {
-    const { publisherIdentity, receiverIdentity, publisherAccountId, receiverAccountId } = args.input;
-    // create certificate
-    // return certificate
 
-    // add recipient to profile of publisher
-    const publisherAccount = await Account.findById(publisherAccountId).lean();
-    if (publisherAccount) {
-      const publisherProfile = await Profile.findById(publisherAccount.profile).lean();
-      if (publisherProfile) {
-        const recipients = [...publisherProfile.certificateRecipients];
-        recipients.push(receiverAccountId);
-        await Profile.updateOne({ id: publisherProfile.id }, { certificateRecipients: recipients })
-      }
-    }
-
-  }
 }
 
 module.exports = resolvers;
