@@ -1,20 +1,11 @@
-import { Schema } from "mongoose"
-import { Account, IAccount } from "../../models/account"
-import { IProfile, Profile } from "../../models/profile"
-import { getAccount, getAccounts, getProfile } from "./helper"
+import { Account } from "../../models/account"
+import { Profile } from "../../models/profile"
 
 const resolvers = {
   Query: {
     allAccounts: async () => {
-      console.log('all account resolver')
       try {
-        const accounts = await Account.find().lean()
-        return accounts.map(async (account: IAccount) => {
-          return {
-            ...account,
-            profile: getProfile(account.profile as Schema.Types.ObjectId)
-          }
-        })
+        return await Account.find().lean();
       } catch (err) {
         console.log(err);
         throw err;
@@ -23,13 +14,7 @@ const resolvers = {
     account: async (parent: any, args: any) => {
       try {
         const { id } = args;
-        const account = await Account.findById(id).lean();
-        if (account)
-          return {
-            ...account,
-            profile: getProfile(account.profile as Schema.Types.ObjectId)
-          }
-        else return {};
+        return await Account.findById(id).lean();
       } catch (err) {
         console.log(err);
         throw err;
@@ -37,14 +22,7 @@ const resolvers = {
     },
     allProfiles: async (parent: any, args: any, context: any, info: any) => {
       try {
-        const profiles = await Profile.find().lean();
-        return profiles.map(async (profile: IProfile) => {
-          return {
-            ...profile,
-            account: getAccount(profile.account as Schema.Types.ObjectId),
-            certificateRecipients: getAccounts(profile.certificateRecipients as Schema.Types.ObjectId[])
-          }
-        })
+        return await Profile.find().lean();
       } catch (err) {
         console.log(err);
         throw err;
@@ -53,13 +31,7 @@ const resolvers = {
     profile: async (parent: any, args: any, context: any, info: any) => {
       try {
         const { id } = args;
-        const profile = await Profile.findById(id).lean();
-        if (profile)
-          return {
-            ...profile,
-            account: getAccount(profile.account as Schema.Types.ObjectId),
-          }
-        else return {}
+        return await Profile.findById(id).lean();
       } catch (err) {
         console.log(err);
         throw err;
@@ -70,13 +42,7 @@ const resolvers = {
         const { id } = args;
         const profile = await Profile.findById(id);
         if (profile) {
-          const recipients = await Profile.find({ _id: { $in: profile.certificateRecipients } }).lean()
-          return recipients.map(async (recipient: IProfile) => {
-            return {
-              ...profile,
-              account: getAccount(profile.account as Schema.Types.ObjectId),
-            }
-          })
+          return await Account.find({ _id: { $in: profile.certificateRecipients } }).lean();
         } else return [];
 
       } catch (err) {
@@ -92,8 +58,6 @@ const resolvers = {
   },
   Mutation: {
     createAccount: async (parent: any, args: any, context: any, info: any) => {
-      console.log(args)
-      console.log(args.input)
       try {
         const { email } = args.input;
         const account = new Account({ email });
@@ -108,14 +72,7 @@ const resolvers = {
         const { account, firstname, lastname } = args.input
         const profile = new Profile({ account, firstname, lastname })
         const createdProfile = await profile.save();
-        await Account.findByIdAndUpdate(account, { profile: createdProfile.id });
-        return {
-          ...createdProfile,
-          id: createdProfile._id,
-          firstname: createdProfile.firstname,
-          lastname: createdProfile.lastname,
-          account: getAccount(profile.account as Schema.Types.ObjectId),
-        }
+        return Account.findByIdAndUpdate(account, { profile: createdProfile.id });
       } catch (err) {
         console.log(err);
         throw err;
@@ -124,13 +81,7 @@ const resolvers = {
     editAccount: async (parent: any, args: any, context: any, info: any) => {
       try {
         const { accountId, email } = args.input;
-        const account = await Account.findByIdAndUpdate(accountId, { email }).lean();
-        if (account)
-          return {
-            ...account,
-            profile: getProfile(account.profile as Schema.Types.ObjectId)
-          }
-        else return {};
+        return await Account.findByIdAndUpdate(accountId, { email }).lean();
       } catch (err) {
         console.log(err);
         throw err;
@@ -139,19 +90,26 @@ const resolvers = {
     editProfile: async (parent: any, args: any, context: any, info: any) => {
       try {
         const { profileId, firstname, lastname } = args.input;
-        const profile = await Profile.findByIdAndUpdate(profileId, { firstname, lastname });
-        if (profile)
-          return {
-            ...profile,
-            account: getAccount(profile.account as Schema.Types.ObjectId),
-          }
+        return await Profile.findByIdAndUpdate(profileId, { firstname, lastname });
       } catch (err) {
         console.log(err);
         throw err;
       }
     }
   },
-
+  Account: {
+    profile: async (parent: any, args: any) => {
+      return await Profile.findById(parent.profile).lean();
+    }
+  },
+  Profile: {
+    account: async (parent: any) => {
+      return await Account.findById(parent.account).lean();
+    },
+    certificateRecipients: async (parent: any) => {
+      return await Account.find({ _id: { $in: parent.certificateRecipients } }).lean();
+    }
+  }
 }
 
 module.exports = resolvers;
