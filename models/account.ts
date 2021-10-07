@@ -21,9 +21,9 @@ const accountSchema = new Schema<IAccount>(
 );
 
 export interface IAccount {
-  id: string,
+  id: mongoose.ObjectId,
   email: string,
-  profile: mongoose.ObjectId | IProfile | null,
+  profile: mongoose.ObjectId,
   identifier: string
 }
 

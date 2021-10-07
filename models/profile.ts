@@ -30,10 +30,11 @@ const profileSchema = new Schema<IProfile>(
 );
 
 export interface IProfile {
+  id: mongoose.ObjectId,
   firstname: string,
   lastname: string,
-  account: mongoose.ObjectId | IAccount | null,
-  certificateRecipients: mongoose.ObjectId[] | IAccount[] | null[];
+  account: mongoose.ObjectId,
+  certificateRecipients: mongoose.ObjectId[];
 }
 
 export const Profile = mongoose.model<IProfile>('Profile', profileSchema);
