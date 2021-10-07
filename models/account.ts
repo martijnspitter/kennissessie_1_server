@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import { IProfile } from './profile';
 
 const Schema = mongoose.Schema;
 
@@ -10,6 +11,7 @@ const accountSchema = new Schema<IAccount>(
     },
     profile: {
       type: Schema.Types.ObjectId,
+      ref: 'Profile'
     },
     identifier: {
       type: String,
@@ -21,7 +23,7 @@ const accountSchema = new Schema<IAccount>(
 export interface IAccount {
   id: string,
   email: string,
-  profile: mongoose.ObjectId,
+  profile: mongoose.ObjectId | IProfile | null,
   identifier: string
 }
 
