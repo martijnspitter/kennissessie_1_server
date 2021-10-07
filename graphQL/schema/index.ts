@@ -31,21 +31,20 @@ export const typeDefs = gql`
     account: ID!
     certificateRecipients: [ID]
   }
-  
-  input AddCertificateRecipient {
-    accountId: ID!
-  }
 
   # input of validate endpoint
   input ValidateCertificatie {
-    certificate: String
-    publisherIdentity: String
+    certificate: String!
+    publisherIdentity: String!
+    publisherAccountId: ID!
   }
 
   # input of publish certificate endpoint
   input PublishCertificate {
-    publisherIdentity: String
-    receiverIdentity: String
+    publisherIdentity: String!
+    receiverIdentity: String!
+    receiverAccountId: ID!
+    publisherAccountId: ID!
   }
 
   input EditAccount {
@@ -75,7 +74,6 @@ export const typeDefs = gql`
     editAccount(input: EditAccount): Account!
     createProfile(input: ProfileInput): Profile!
     editProfile(input: EditProfile): Profile!
-    addCertificateRecipient(input: AddCertificateRecipient): Account!
     
     # publish certificate endpoint. Return type now string
     publishCertificate(input: PublishCertificate): String!
