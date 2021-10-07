@@ -8,6 +8,10 @@ const channelSchema = new Schema<IChannel>(
       type: Schema.Types.ObjectId,
       required: true,
     },
+    title: {
+      type: String,
+      required: true,
+    },
     participants: [
       {
         type: Schema.Types.ObjectId,
@@ -24,6 +28,7 @@ const channelSchema = new Schema<IChannel>(
 
 export interface IChannel {
   owner: mongoose.ObjectId,
+  title: string,
   participants: mongoose.ObjectId[],
   messages: mongoose.ObjectId[]
 }
