@@ -72,7 +72,8 @@ const resolvers = {
         const { account, firstname, lastname } = args.input
         const profile = new Profile({ account, firstname, lastname })
         const createdProfile = await profile.save();
-        return Account.findByIdAndUpdate(account, { profile: createdProfile.id });
+        await Account.findByIdAndUpdate(account, { profile: createdProfile._id });
+        return createdProfile
       } catch (err) {
         console.log(err);
         throw err;
