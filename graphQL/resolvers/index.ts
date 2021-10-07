@@ -173,18 +173,21 @@ const resolvers = {
     }
   },
   Channel: {
-    account: async (parent: any) => {
+    owner: async (parent: any) => {
       return await Account.findById(parent.account).lean();
     },
-    message: async (parent: any) => {
-      return await Message.findById(parent.message).lean();
+    messages: async (parent: any) => {
+      return await Message.find({ _id: { $in: parent.messages } }).lean();
+    },
+    participants: async (parent: any) => {
+      return await Account.find({ _id: { $in: parent.participants } })
     }
   },
   Message: {
     channel: async (parent: any) => {
       return await Channel.findById(parent.channel).lean();
     },
-    account: async (parent: any) => {
+    createdBy: async (parent: any) => {
       return await Account.findById(parent.account).lean();
     }
   }
