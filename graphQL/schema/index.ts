@@ -39,12 +39,13 @@ export const typeDefs = gql`
 
   input ChannelInput {
     owner: ID!
-    participants: [ID]
+    title: String!
   }
 
   input AddParticipant {
     participant: ID!
     owner: ID!
+    channel: ID!
   }
 
   input MessageInput {
