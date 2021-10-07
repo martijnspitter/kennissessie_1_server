@@ -93,6 +93,10 @@ export const typeDefs = gql`
     lastname: String
   }
 
+  input AllMyChannels {
+    accountId: ID!
+  }
+
   type Query {
     allAccounts: [Account!]!
     account(id: String!): Account
@@ -103,7 +107,7 @@ export const typeDefs = gql`
     # here is the validate endpoint with input and return: Boolean? 
     validate(input: ValidateCertificatie): Boolean!
 
-    allChannels: [Channel!]!
+    allMyChannels(input: AllMyChannels): [Channel!]!
     channel(id: String!): Channel!
     allMessagesForChannel(id: String!): [Messages!]!
     message(id: String): Message!
