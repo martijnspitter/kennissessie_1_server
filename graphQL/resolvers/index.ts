@@ -5,16 +5,13 @@ import { getAccount, getAccounts, getProfile } from "./helper"
 
 const resolvers = {
   Query: {
-    allAccounts: async () => {
-      console.log('all account resolver')
+    allAccounts: async (parent: any, args: any, context: any, info: any) => {
+      console.log('parent', parent)
+      console.log('args', args)
+      console.log('context', context)
+      console.log('info', info)
       try {
-        const accounts = await Account.find().lean()
-        return accounts.map(async (account: IAccount) => {
-          return {
-            ...account,
-            profile: getProfile(account.profile as Schema.Types.ObjectId)
-          }
-        })
+        return await Account.find().lean()
       } catch (err) {
         console.log(err);
         throw err;
@@ -23,13 +20,7 @@ const resolvers = {
     account: async (parent: any, args: any) => {
       try {
         const { id } = args;
-        const account = await Account.findById(id).lean();
-        if (account)
-          return {
-            ...account,
-            profile: getProfile(account.profile as Schema.Types.ObjectId)
-          }
-        else return {};
+        return await Account.findById(id).lean();
       } catch (err) {
         console.log(err);
         throw err;
@@ -52,13 +43,7 @@ const resolvers = {
     editAccount: async (parent: any, args: any, context: any, info: any) => {
       try {
         const { accountId, email } = args.input;
-        const account = await Account.findByIdAndUpdate(accountId, { email }).lean();
-        if (account)
-          return {
-            ...account,
-            profile: getProfile(account.profile as Schema.Types.ObjectId)
-          }
-        else return {};
+        return await Account.findByIdAndUpdate(accountId, { email }).lean();
       } catch (err) {
         console.log(err);
         throw err;
