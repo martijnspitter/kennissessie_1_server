@@ -40,7 +40,6 @@ export const typeDefs = gql`
   input ChannelInput {
     owner: ID!
     participants: [ID]
-    messages: [Message]
   }
 
   input AddParticipant {
