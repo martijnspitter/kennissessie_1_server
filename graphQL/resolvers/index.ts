@@ -134,15 +134,30 @@ const resolvers = {
       return 'success';
     },
     createChannel: async (parent: any, args: any, context: any, info: any) => {
-      const { owner, participants } = args.input
-      const channel = new Channel({ owner, participants });
-      const createdChannel = await channel.save();
-      return {
-        ...createdChannel,
-        id: createdChannel._id
-      }
+      const { owner, title } = args.input;
+      const channel = new Channel({ owner, participants: [owner], title });
+      return await channel.save();
     },
-    // createMessage: async 
+    createMessage: async (parent: any, args: any, context: any, info: any) => {
+      const { channel, createdBy, title, body } = args.input;
+      const foundChannel = await Channel.findById(channel);
+      if (foundChannel && foundChannel.participants.includes(createdBy)) {
+        const message = new Message({ channel, createdBy, title, body });
+        const createdMessage = await message.save();
+        foundChannel.messages.push(createdMessage._id);
+        await foundChannel.save();
+        return createdMessage;
+      }
+
+    },
+    addParticipant: async (parent: any, args: any, context: any, info: any) => {
+      const { participant, owner, channel } = args.input;
+      const foundChannel = await Channel.findById(channel);
+      if (foundChannel && foundChannel.owner === owner) {
+        foundChannel.participants.push(participant);
+        return await foundChannel.save();
+      }
+    }
   },
   Account: {
     profile: async (parent: any, args: any) => {
