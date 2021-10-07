@@ -171,6 +171,22 @@ const resolvers = {
     certificateRecipients: async (parent: any) => {
       return await Account.find({ _id: { $in: parent.certificateRecipients } }).lean();
     }
+  },
+  Channel: {
+    account: async (parent: any) => {
+      return await Account.findById(parent.account).lean();
+    },
+    message: async (parent: any) => {
+      return await Message.findById(parent.message).lean();
+    }
+  },
+  Message: {
+    channel: async (parent: any) => {
+      return await Channel.findById(parent.channel).lean();
+    },
+    account: async (parent: any) => {
+      return await Account.findById(parent.account).lean();
+    }
   }
 }
 
