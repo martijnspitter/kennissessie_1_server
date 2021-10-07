@@ -108,7 +108,7 @@ export const typeDefs = gql`
 
     allMyChannels(input: AllMyChannels): [Channel!]!
     channel(id: String!): Channel!
-    allMessagesForChannel(id: String!): [Messages!]!
+    allMessagesForChannel(id: String!): [Message!]!
     message(id: String): Message!
   }
 
