@@ -1,4 +1,6 @@
 import { Account } from "../../models/account"
+import { Channel } from "../../models/channel";
+import { Message } from "../../models/message";
 import { Profile } from "../../models/profile"
 
 const resolvers = {
@@ -54,6 +56,22 @@ const resolvers = {
       const { certificate, publisherIdentity, publisherAccountId } = args.input;
       // validate certificate here
       return true;
+    },
+    allMyChannels: async (parent: any, args: any, context: any, info: any) => {
+      const { accountId } = args.input;
+      return await Channel.find({ participants: accountId }).lean()
+    },
+    channel: async (parent: any, args: any, context: any, info: any) => {
+      const { id } = args;
+      return await Channel.findById(id).lean();
+    },
+    allMessagesForChannel: async (parent: any, args: any, context: any, info: any) => {
+      const { id } = args;
+      return await Message.find({ channel: id }).lean();
+    },
+    message: async (parent: any, args: any, context: any, info: any) => {
+      const { id } = args;
+      return await Message.findById(id).lean();
     }
   },
   Mutation: {
@@ -72,7 +90,8 @@ const resolvers = {
         const { account, firstname, lastname } = args.input
         const profile = new Profile({ account, firstname, lastname })
         const createdProfile = await profile.save();
-        return Account.findByIdAndUpdate(account, { profile: createdProfile.id });
+        await Account.findByIdAndUpdate(account, { profile: createdProfile._id });
+        return createdProfile;
       } catch (err) {
         console.log(err);
         throw err;
@@ -113,7 +132,17 @@ const resolvers = {
 
       // return certificate
       return 'success';
-    }
+    },
+    createChannel: async (parent: any, args: any, context: any, info: any) => {
+      const { owner, participants } = args.input
+      const channel = new Channel({ owner, participants });
+      const createdChannel = await channel.save();
+      return {
+        ...createdChannel,
+        id: createdChannel._id
+      }
+    },
+    // createMessage: async 
   },
   Account: {
     profile: async (parent: any, args: any) => {
