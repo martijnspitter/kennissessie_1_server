@@ -20,6 +20,41 @@ export const typeDefs = gql`
     updatedAt: Int!
   }
 
+  type Channel {
+    owner: Account!
+    participants: [Account!]!
+    messages: [Message!]!
+    createdAt: Int!
+    updatedAt: Int!
+  }
+
+  type Message {
+    channel: Channel!
+    createdBy: Account!
+    title: String!
+    body: String!
+    createdAt: Int!
+    updatedAt: Int!
+  }
+
+  input ChannelInput {
+    owner: ID!
+    participants: [ID]
+    messages: [Message]
+  }
+
+  input AddParticipant {
+    participant: ID!
+    owner: ID!
+  }
+
+  input MessageInput {
+    channel: ID!
+    createdBy: ID!
+    title: String!
+    body: String!
+  }
+
   input AccountInput {
     email: String!
     identifier: String
@@ -67,6 +102,11 @@ export const typeDefs = gql`
 
     # here is the validate endpoint with input and return: Boolean? 
     validate(input: ValidateCertificatie): Boolean!
+
+    allChannels: [Channel!]!
+    channel(id: String!): Channel!
+    allMessagesForChannel(id: String!): [Messages!]!
+    message(id: String): Message!
   }
 
   type Mutation {
@@ -77,6 +117,10 @@ export const typeDefs = gql`
     
     # publish certificate endpoint. Return type now string
     publishCertificate(input: PublishCertificate): String!
+
+    createChannel(input: ChannelInput): Channel!
+    addParticipant(input: AddParticipant): Channel!
+    createMessage(input: MessageInput): Message!
   }
 
 `;
