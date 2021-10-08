@@ -5,7 +5,7 @@ const resolvers = {
   Query: {
     allAccounts: async () => {
       try {
-        return await Account.find().lean();
+        return await Account.find();
       } catch (err) {
         console.log(err);
         throw err;
@@ -14,7 +14,7 @@ const resolvers = {
     account: async (parent: any, args: any) => {
       try {
         const { id } = args;
-        return await Account.findById(id).lean();
+        return await Account.findById(id);
       } catch (err) {
         console.log(err);
         throw err;
@@ -22,7 +22,7 @@ const resolvers = {
     },
     allProfiles: async (parent: any, args: any, context: any, info: any) => {
       try {
-        return await Profile.find().lean();
+        return await Profile.find();
       } catch (err) {
         console.log(err);
         throw err;
@@ -31,7 +31,7 @@ const resolvers = {
     profile: async (parent: any, args: any, context: any, info: any) => {
       try {
         const { id } = args;
-        return await Profile.findById(id).lean();
+        return await Profile.findById(id);
       } catch (err) {
         console.log(err);
         throw err;
@@ -42,7 +42,7 @@ const resolvers = {
         const { id } = args;
         const profile = await Profile.findById(id);
         if (profile) {
-          return await Account.find({ _id: { $in: profile.certificateRecipients } }).lean();
+          return await Account.find({ _id: { $in: profile.certificateRecipients } });
         } else return [];
 
       } catch (err) {
@@ -82,7 +82,7 @@ const resolvers = {
     editAccount: async (parent: any, args: any, context: any, info: any) => {
       try {
         const { accountId, email } = args.input;
-        return await Account.findByIdAndUpdate(accountId, { email }).lean();
+        return await Account.findByIdAndUpdate(accountId, { email });
       } catch (err) {
         console.log(err);
         throw err;
@@ -102,9 +102,9 @@ const resolvers = {
       // create certificate
 
       // add recipient to profile of publisher
-      const publisherAccount = await Account.findById(publisherAccountId).lean();
+      const publisherAccount = await Account.findById(publisherAccountId);
       if (publisherAccount) {
-        const publisherProfile = await Profile.findById(publisherAccount.profile).lean();
+        const publisherProfile = await Profile.findById(publisherAccount.profile);
         if (publisherProfile) {
           const recipients = [...publisherProfile.certificateRecipients];
           recipients.push(receiverAccountId);
@@ -118,15 +118,15 @@ const resolvers = {
   },
   Account: {
     profile: async (parent: any, args: any) => {
-      return await Profile.findById(parent.profile).lean();
+      return await Profile.findById(parent.profile);
     }
   },
   Profile: {
     account: async (parent: any) => {
-      return await Account.findById(parent.account).lean();
+      return await Account.findById(parent.account);
     },
     certificateRecipients: async (parent: any) => {
-      return await Account.find({ _id: { $in: parent.certificateRecipients } }).lean();
+      return await Account.find({ _id: { $in: parent.certificateRecipients } });
     }
   }
 }
