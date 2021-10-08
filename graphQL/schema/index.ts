@@ -103,13 +103,19 @@ export const typeDefs = gql`
   }
 
   type Query {
+    "All accounts in an array"
     allAccounts: [Account!]!
+    "Single account object"
     account(id: String!): Account
+    "All profiles in an array"
     allProfiles: [Profile!]!
+    "Single profile"
     profile(id: String!): Profile
+    "Recipients of a certificate"
     certificateRecipients(id: String!): [Account]!
 
     # here is the validate endpoint with input and return: Boolean? 
+    "Validate a certificate"
     validate(input: ValidateCertificatie): Boolean!
 
     allMyChannels(input: AllMyChannels): [Channel!]!
@@ -119,12 +125,17 @@ export const typeDefs = gql`
   }
 
   type Mutation {
+    "Create an account"
     createAccount(input: AccountInput): Account!
+    "Edit account"
     editAccount(input: EditAccount): Account!
+    "Create a profile"
     createProfile(input: ProfileInput): Profile!
+    "Edit profile"
     editProfile(input: EditProfile): Profile!
     
     # publish certificate endpoint. Return type now string
+    "Publish a certificate"
     publishCertificate(input: PublishCertificate): String!
 
     createChannel(input: ChannelInput): Channel!
