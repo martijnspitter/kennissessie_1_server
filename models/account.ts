@@ -1,5 +1,4 @@
 import mongoose from 'mongoose';
-import { IProfile } from './profile';
 
 const Schema = mongoose.Schema;
 
@@ -16,6 +15,12 @@ const accountSchema = new Schema<IAccount>(
     identifier: {
       type: String,
     },
+    credential: [
+      {
+        title: String,
+        id: String
+      }
+    ]
   },
   { timestamps: true }
 );
@@ -24,7 +29,8 @@ export interface IAccount {
   id: mongoose.ObjectId,
   email: string,
   profile: mongoose.ObjectId,
-  identifier: string
+  identifier: string,
+  credential: { title: string, id: string }[],
 }
 
 export const Account = mongoose.model<IAccount>('Account', accountSchema);

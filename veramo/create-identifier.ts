@@ -1,9 +1,5 @@
 import { agent } from './setup'
 
-async function main() {
-  const identity = await agent.didManagerCreate()
-  console.log(`New identity created`)
-  console.log(identity)
+export async function createIdentifier() {
+  return await agent.didManagerCreate();
 }
-
-main().catch(console.log)

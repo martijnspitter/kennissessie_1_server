@@ -5,9 +5,10 @@ export const typeDefs = gql`
     id: ID!
     email: String!
     profile: Profile!    
-    identifier: String
+    identifier: String!
     channels: [Channel!]!
     messages: [Message!]!
+    credential: [Credential!]!
     createdAt: Int!
     updatedAt: Int!
   }
@@ -42,6 +43,11 @@ export const typeDefs = gql`
     updatedAt: Int!
   }
 
+  type Credential {
+    title: String!,
+    id: String!
+  }
+
   input ChannelInput {
     owner: ID!
     title: String!
@@ -72,19 +78,11 @@ export const typeDefs = gql`
     certificateRecipients: [ID]
   }
 
-  # input of validate endpoint
-  input ValidateCertificatie {
-    certificate: String!
-    publisherIdentity: String!
-    publisherAccountId: ID!
-  }
-
-  # input of publish certificate endpoint
   input PublishCertificate {
-    publisherIdentity: String!
-    receiverIdentity: String!
+    publisherId: String!
+    receiverId: String!
     receiverAccountId: ID!
-    publisherAccountId: ID!
+    publisherAccountId: ID!    
   }
 
   input EditAccount {
@@ -113,11 +111,6 @@ export const typeDefs = gql`
     profile(id: String!): Profile
     "Recipients of a certificate"
     certificateRecipients(id: String!): [Account]!
-
-    # here is the validate endpoint with input and return: Boolean? 
-    "Validate a certificate"
-    validate(input: ValidateCertificatie): Boolean!
-
     allMyChannels(input: AllMyChannels): [Channel!]!
     channel(id: String!): Channel!
     allMessagesForChannel(id: String!): [Message!]!
@@ -134,7 +127,6 @@ export const typeDefs = gql`
     "Edit profile"
     editProfile(input: EditProfile): Profile!
     
-    # publish certificate endpoint. Return type now string
     "Publish a certificate"
     publishCertificate(input: PublishCertificate): String!
 

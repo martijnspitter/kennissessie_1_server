@@ -23,17 +23,18 @@ import { getResolver as ethrDidResolver } from 'ethr-did-resolver'
 import { getResolver as webDidResolver } from 'web-did-resolver'
 
 // Storage plugin using TypeOrm
-import { Entities, KeyStore, DIDStore, IDataStoreORM, PrivateKeyStore } from '@veramo/data-store'
+import { Entities, KeyStore, DIDStore, IDataStoreORM, PrivateKeyStore, DataStore, DataStoreORM } from '@veramo/data-store'
 
 // TypeORM is installed with `@veramo/data-store`
 import { createConnection } from 'typeorm'
+import { CredentialIssuer, ICredentialIssuer } from '@veramo/credential-w3c'
 
 // This will be the name for the local sqlite database for demo purposes
 const DATABASE_FILE = 'database.sqlite'
 
 // You will need to get a project ID from infura https://www.infura.io
 const INFURA_PROJECT_ID = 'dca755b2a22e41179c1f3bbaa1ce8c2f'
-const secretKey = ''
+const secretKey = '0af65003c6df4c0d8a8784e4fe70bc24'
 
 const dbConnection = createConnection({
   type: 'sqlite',
@@ -43,7 +44,7 @@ const dbConnection = createConnection({
   entities: Entities,
 })
 
-export const agent = createAgent<IDIDManager & IKeyManager & IDataStore & IDataStoreORM & IResolver>({
+export const agent = createAgent<IDIDManager & IKeyManager & IDataStore & IDataStoreORM & IResolver & ICredentialIssuer>({
   plugins: [
     new KeyManager({
       store: new KeyStore(dbConnection),
@@ -62,7 +63,7 @@ export const agent = createAgent<IDIDManager & IKeyManager & IDataStore & IDataS
         }),
         'did:web': new WebDIDProvider({
           defaultKms: 'local',
-        }),
+        })
       },
     }),
     new DIDResolverPlugin({
@@ -71,6 +72,9 @@ export const agent = createAgent<IDIDManager & IKeyManager & IDataStore & IDataS
         ...webDidResolver(),
       }),
     }),
+    new DataStore(dbConnection),
+    new DataStoreORM(dbConnection),
+    new CredentialIssuer(),
   ],
 })
 

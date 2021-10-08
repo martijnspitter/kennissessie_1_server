@@ -2,6 +2,8 @@ import { Account } from "../../models/account"
 import { Channel } from "../../models/channel";
 import { Message } from "../../models/message";
 import { Profile } from "../../models/profile"
+import { createCredential } from "../../veramo/create-credential";
+import { agent } from "../../veramo/setup";
 
 const resolvers = {
   Query: {
@@ -52,11 +54,6 @@ const resolvers = {
         throw err;
       }
     },
-    validate: async (parent: any, args: any, context: any, info: any) => {
-      const { certificate, publisherIdentity, publisherAccountId } = args.input;
-      // validate certificate here
-      return true;
-    },
     allMyChannels: async (parent: any, args: any, context: any, info: any) => {
       const { accountId } = args.input;
       return await Channel.find({ participants: accountId })
@@ -79,6 +76,13 @@ const resolvers = {
       try {
         const { email } = args.input;
         const account = new Account({ email });
+
+        const identifier = await agent.didManagerCreate({
+          alias: account._id,
+          provider: 'did:ethr:rinkeby',
+          kms: 'local'
+        });
+        account.identifier = identifier.did;
         return await account.save();
       } catch (err) {
         console.log(err);
@@ -116,9 +120,11 @@ const resolvers = {
       }
     },
     publishCertificate: async (parent: any, args: any, context: any, info: any) => {
-      const { publisherIdentity, receiverIdentity, publisherAccountId, receiverAccountId } = args.input;
+      const { publisherId, publisherAccountId, receiverId, receiverAccountId } = args.input;
       // create certificate
-
+      const credential = await createCredential(receiverId, publisherId, 'CodingDojo!')
+      console.log(credential);
+      await Account.findByIdAndUpdate(receiverAccountId, { $push: { credential: { id: credential.credentialSubject.id, title: credential.credentialSubject.name } } });
       // add recipient to profile of publisher
       const publisherAccount = await Account.findById(publisherAccountId);
       if (publisherAccount) {
