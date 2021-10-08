@@ -6,6 +6,8 @@ export const typeDefs = gql`
     email: String!
     profile: Profile!    
     identifier: String
+    channels: [Channel!]!
+    messages: [Message!]!
     createdAt: Int!
     updatedAt: Int!
   }
@@ -21,6 +23,8 @@ export const typeDefs = gql`
   }
 
   type Channel {
+    id: ID!
+    title: String!
     owner: Account!
     participants: [Account!]!
     messages: [Message!]!
@@ -29,6 +33,7 @@ export const typeDefs = gql`
   }
 
   type Message {
+    id: ID!
     channel: Channel!
     createdBy: Account!
     title: String!
