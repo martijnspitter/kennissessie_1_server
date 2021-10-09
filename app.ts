@@ -1,6 +1,6 @@
 import express from 'express';
-import { typeDefs } from './graphql/schema';
-const resolvers = require('./graphql/resolvers')
+import { typeDefs } from './src/graphql/schema';
+import { resolvers } from './src/graphql/resolvers';
 import mongoose from 'mongoose';
 import { ApolloServer, AuthenticationError } from 'apollo-server-express';
 
@@ -16,10 +16,11 @@ async function startServer() {
     resolvers,
     context: ({ req }) => {
       // const token = req.headers.authorization || '';
-      const user = true
+      const user = true;
+      const authenticated = true;
       if (!user) throw new AuthenticationError('you must be logged in');
 
-      return { user, welkom: 'Welcome at TheGuild!' };
+      return { user, authenticated };
     }
   });
 

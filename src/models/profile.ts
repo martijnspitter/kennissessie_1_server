@@ -13,18 +13,12 @@ const profileSchema = new Schema<IProfile>(
       type: String,
       required: true
     },
-    account: {
+    accountId: {
       type: Schema.Types.ObjectId,
       ref: 'Account',
       required: true
     },
-    certificateRecipients: [
-      {
-        type: Schema.Types.ObjectId,
-        ref: 'Account',
-        required: false
-      }
-    ]
+
   },
   { timestamps: true }
 );
@@ -33,8 +27,7 @@ export interface IProfile {
   id: mongoose.ObjectId,
   firstname: string,
   lastname: string,
-  account: mongoose.ObjectId,
-  certificateRecipients: mongoose.ObjectId[];
+  accountId: mongoose.ObjectId,
 }
 
 export const Profile = mongoose.model<IProfile>('Profile', profileSchema);

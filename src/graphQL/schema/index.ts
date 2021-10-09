@@ -9,6 +9,7 @@ export const typeDefs = gql`
     channels: [Channel!]!
     messages: [Message!]!
     credential: [Credential!]!
+    certificateRecipients: [Account!]!
     createdAt: Int!
     updatedAt: Int!
   }
@@ -18,7 +19,6 @@ export const typeDefs = gql`
     firstname: String!
     lastname: String!
     account: Account!
-    certificateRecipients: [Account!]!
     createdAt: Int!
     updatedAt: Int!
   }
@@ -49,33 +49,31 @@ export const typeDefs = gql`
   }
 
   input ChannelInput {
-    owner: ID!
+    ownerId: ID!
     title: String!
   }
 
   input AddParticipant {
     participant: ID!
-    owner: ID!
+    ownerId: ID!
     channel: ID!
   }
 
   input MessageInput {
-    channel: ID!
-    createdBy: ID!
+    channelId: ID!
+    createdById: ID!
     title: String!
     body: String!
   }
 
   input AccountInput {
     email: String!
-    identifier: String
   }
 
   input ProfileInput {
     firstname: String!
     lastname: String!
-    account: ID!
-    certificateRecipients: [ID]
+    accountId: ID!
   }
 
   input PublishCertificate {
@@ -110,7 +108,6 @@ export const typeDefs = gql`
     "Single profile"
     profile(id: String!): Profile
     "Recipients of a certificate"
-    certificateRecipients(id: String!): [Account]!
     allMyChannels(input: AllMyChannels): [Channel!]!
     channel(id: String!): Channel!
     allMessagesForChannel(id: String!): [Message!]!

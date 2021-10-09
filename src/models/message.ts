@@ -4,11 +4,11 @@ const Schema = mongoose.Schema;
 
 const messageSchema = new Schema<IMessage>(
   {
-    channel: {
+    channelId: {
       type: Schema.Types.ObjectId,
       required: true
     },
-    createdBy: {
+    createdById: {
       type: Schema.Types.ObjectId,
       required: true
     },
@@ -24,8 +24,8 @@ const messageSchema = new Schema<IMessage>(
 );
 
 export interface IMessage {
-  channel: mongoose.ObjectId,
-  createdBy: mongoose.ObjectId,
+  channelId: mongoose.ObjectId,
+  createdById: mongoose.ObjectId,
   title: string,
   body: string,
 }

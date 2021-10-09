@@ -8,17 +8,20 @@ const accountSchema = new Schema<IAccount>(
       type: String,
       required: true
     },
-    profile: {
-      type: Schema.Types.ObjectId,
-      ref: 'Profile'
-    },
-    identifier: {
+    identifierUrl: {
       type: String,
     },
     credential: [
       {
         title: String,
         id: String
+      }
+    ],
+    certificateRecipients: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: 'Account',
+        required: false
       }
     ]
   },
@@ -28,9 +31,9 @@ const accountSchema = new Schema<IAccount>(
 export interface IAccount {
   id: mongoose.ObjectId,
   email: string,
-  profile: mongoose.ObjectId,
-  identifier: string,
+  identifierUrl: string,
   credential: { title: string, id: string }[],
+  certificateRecipients: mongoose.ObjectId[],
 }
 
 export const Account = mongoose.model<IAccount>('Account', accountSchema);

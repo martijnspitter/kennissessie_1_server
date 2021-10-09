@@ -39,7 +39,7 @@ const secretKey = '0af65003c6df4c0d8a8784e4fe70bc24'
 const dbConnection = createConnection({
   type: 'sqlite',
   database: DATABASE_FILE,
-  synchronize: true,
+  synchronize: false,
   logging: ['error', 'info', 'warn'],
   entities: Entities,
 })
